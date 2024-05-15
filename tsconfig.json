@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "es2018",
+      "es5",
+      "dom",
+    ],
+    "baseUrl": ".",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "target": "es2015",
+    "strict": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "./build",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "declaration": true,
+    "sourceMap": false
+  },
+  "exclude": [
+    "./node_modules/**/*",
+    "./build/**/*"
+  ],
+  "include": [
+    "./src/**/*"
+  ]
+}
