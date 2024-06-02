@@ -1,6 +1,6 @@
 import { handleUpdatedBids } from './collection';
 import { getCollectionBids } from '../os/collectionBid';
-import { getCollection } from '../os/collections';
+import { getCollectionFloorPrice } from '../os/collections';
 import { Store } from '../store';
 import { logDebug, logError } from '../utils/log';
 
@@ -44,9 +44,10 @@ export const turnOffFailsafe = (reason: keyof typeof failsafeReasons): void => {
 const failsafeCheckCollection = async (store: Store, contractAddress: string): Promise<void> => {
   let floor: number | undefined = undefined;
   if (store.collections[contractAddress].config.floorCheck) {
-    const collection = await getCollection(contractAddress, store.wallets[0]);
-    if (collection.floorPrice) {
-      floor = Number(collection.floorPrice.amount);
+    const floorPrice = await getCollectionFloorPrice(contractAddress, store.wallets[0]);
+    if (floorPrice) {
+      floor = Number(floorPrice.amount);
+      console.log("floorPrice: " + floor);
     }
   }
 

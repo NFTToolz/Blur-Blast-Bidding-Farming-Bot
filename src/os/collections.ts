@@ -8,6 +8,53 @@ type Amount = {
   unit: string;
 };
 
+type Token = {
+  tokenId: string;
+  name: string;
+  price: Amount;
+};
+
+type TokenApiResponse = {
+  success: boolean;
+  tokens: Token[];
+};
+
+export const getCollectionFloorPrice = async (
+  contractAddress: string,
+  wallet: LoggedInWallet
+): Promise<Amount | null> => {
+  await osRateLimit();
+  try {
+    const response = await blastAxios.get<TokenApiResponse>(
+      `/v1/collections/${contractAddress}/tokens`,
+      {
+        headers: {
+          authToken: wallet.authKey,
+          walletAddress: wallet.address,
+        },
+        params: {
+          filters: JSON.stringify({traits: [], hasAsks: true})
+        }
+      }
+    );
+    
+    if (!response.data.success) {
+      throw new Error(`Failed to fetch tokens for collection ${contractAddress}`);
+    }
+
+    const tokens = response.data.tokens;
+    if (tokens.length === 0) {
+      console.log('No tokens with asks available.');
+      return null;
+    }
+    // Assuming tokens are returned in the order of asking prices ascending
+    return tokens[0].price;
+  } catch (error) {
+    console.error('Error fetching floor price:', error);
+    throw error;
+  }
+};
+
 export type Collection = {
   contractAddress: string;
   name: string;
@@ -43,9 +90,9 @@ export const getCollection = async (
   if (response.data.success === false) {
     throw new Error(`Failed to fetch collection ${contractAddress}`);
   }
-
   return response.data.collection;
 };
+
 
 // Define a type for your API response
 interface CollectionApiResponse {

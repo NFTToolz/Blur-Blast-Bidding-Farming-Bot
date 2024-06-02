@@ -10,6 +10,7 @@ import { UpdatedBids } from '../store/collectionsSlice';
 import { logDebug, logEmergency, logError, logInfo } from '../utils/log';
 import { blurContract } from '../utils/provider';
 import { getQuantity } from '../utils/quantity';
+import { walletRateLimit } from '../utils/rateLimit';
 
 export const setupCollection = async (store: Store, contractAddress: string): Promise<void> => {
   const bids = await getCollectionBids(contractAddress, store.wallets[0], 5);
@@ -52,6 +53,7 @@ const sendCollectionBid = async (
       logError(err.message);
 
       if (!retry && err.message === 'Limit exceeded') {
+        await walletRateLimit();
         const currentBalance = await blurContract.balanceOf(wallet.address);
         wallet.balance = Number(ethers.formatEther(currentBalance));
 
@@ -206,6 +208,8 @@ const syncMyBids = async (
       continue;
     }
 
+    aboveExecutableSizeSum += bid.executableSize;
+
     if (
       aboveExecutableSizeSum >= collection.config.poolSizeLimitBid ||
       (collection.config.bidToSamePool &&
@@ -241,7 +245,7 @@ const syncMyBids = async (
       promises.push(sendCollectionBid(store, contractAddress, bid.price, quantities, wallet));
       break;
     }
-
+    
     if (aboveExecutableSizeSum < collection.config.poolSizeLimitBid) {
       logDebug(
         `Wallet [${wallet.address}] Contract [${collection.slug}]: Skipping pool #${pool} ${bid.price}, above executableSize ${aboveExecutableSizeSum} < ${collection.config.poolSizeLimitBid}`,
@@ -256,8 +260,8 @@ const syncMyBids = async (
         `Wallet [${wallet.address}] Contract [${collection.slug}]: Skipping pool #${pool} ${bid.price}, my executableSize ${myExecutableSizeSum} < ${collection.config.samePoolSizeLimitBid}`,
       );
     }
-
-    aboveExecutableSizeSum += bid.executableSize;
+    
+    
   }
 
   await Promise.all(promises);

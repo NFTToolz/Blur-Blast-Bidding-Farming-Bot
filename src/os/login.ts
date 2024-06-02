@@ -5,7 +5,7 @@ import { readWallets } from '../storage/wallets';
 import { blastAxios } from '../utils/axios';
 import { logDebug } from '../utils/log';
 import { blurContract } from '../utils/provider';
-import { osRateLimit } from '../utils/rateLimit';
+import { osRateLimit, walletRateLimit } from '../utils/rateLimit';
 
 type Challenge = {
   message: string;
@@ -26,7 +26,7 @@ export type LoggedInWallet = {
 };
 
 export const login = async (walletAddress: string, signer: Wallet): Promise<LoggedInWallet> => {
-
+  await walletRateLimit();
   const balance = await blurContract.balanceOf(walletAddress);
 
   const savedWallets = readWallets();
