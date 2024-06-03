@@ -26,9 +26,11 @@ export type LoggedInWallet = {
 };
 
 export const login = async (walletAddress: string, signer: Wallet): Promise<LoggedInWallet> => {
+  
   await walletRateLimit();
+  //console.log("walletAddress: " + walletAddress);
   const balance = await blurContract.balanceOf(walletAddress);
-
+  //console.log("balance: " + balance);
   const savedWallets = readWallets();
 
   if (savedWallets[walletAddress]) {

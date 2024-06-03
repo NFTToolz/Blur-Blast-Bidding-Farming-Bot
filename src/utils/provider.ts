@@ -2,8 +2,9 @@ import { Contract, ethers, Wallet } from 'ethers';
 
 import { infuraKeyEnv, privateKeysEnv } from './flags';
 
-// export const provider = new ethers.InfuraProvider('mainnet', infuraKeyEnv);
-export const provider = new ethers.JsonRpcProvider(`https://rpc.blast.io/`);
+//export const provider = new ethers.InfuraProvider('mainnet', infuraKeyEnv);
+export const provider = new ethers.JsonRpcProvider('https://blast-mainnet.infura.io/v3/'+infuraKeyEnv);
+//export const provider = new ethers.JsonRpcProvider(`https://rpc.blast.io/`);
 
 export const getSigners = async (): Promise<[string, Wallet][]> => {
   const privateKeys = privateKeysEnv.split(',');
