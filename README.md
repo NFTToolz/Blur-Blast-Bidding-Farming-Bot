@@ -57,4 +57,10 @@ Floor check formula to send bid: `bid amount <= floor * (FLOOR_LIMIT / 100 + 1)`
 - Pool 2 = 0.56 -> Will skip as 0.56 > 0.5*1.1
 - Pool 3 = 0.55 -> Will create bid as 0.55 <= 0.5*1.1
 
-**Raise a ticket to get access today https://discord.gg/CsGGnd7rtJ (subscription model)**
+**Raise a ticket to get access today  (subscription model)**
+
+https://discord.gg/CsGGnd7rtJ
+
+discord: mattnfttools
+
+telegram: nfttoolz
